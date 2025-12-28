@@ -1,5 +1,5 @@
-// Package main @author: Violet-Eva @date  : 2025/12/26 @notes :
-package main
+// Package fm @author: Violet-Eva @date  : 2025/12/26 @notes :
+package fm
 
 import (
 	"crypto/rand"

@@ -1,5 +1,5 @@
-// Package main @author: Violet-Eva @date  : 2025/9/22 @notes :
-package main
+// Package fm @author: Violet-Eva @date  : 2025/9/22 @notes :
+package fm
 
 import (
 	"fmt"
