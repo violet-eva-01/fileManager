@@ -100,7 +100,6 @@ func matchPathPattern(pattern, path string) bool {
 
 	regexpStr := fmt.Sprintf("^%s", normalizedPattern)
 	compile := regexp.MustCompile(regexpStr)
-	fmt.Printf("matchPathPattern: pattern=%s path=%s\n", normalizedPattern, normalizedPath)
 	return compile.MatchString(normalizedPath) || strings.HasPrefix(normalizedPattern, normalizedPath)
 }
 
