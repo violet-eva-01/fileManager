@@ -256,9 +256,9 @@ func (fm *FileManager) Run() {
 	engine.Use(fm.recovery())
 	engine.Use(fm.handlerFunc...)
 
-	engine.GET("/login", fm.showLoginForm)
-	engine.POST("/login", fm.handleLogin)
-	engine.GET("/logout", fm.handleLogout)
+	engine.GET("/file/login", fm.showLoginForm)
+	engine.POST("/file/login", fm.handleLogin)
+	engine.GET("/file/logout", fm.handleLogout)
 
 	authorized := engine.Group("/", fm.jwtAuthMiddleware())
 	{

@@ -45,9 +45,9 @@ func (fm *FileManager) generateFileManagerHTML(fullPath, path string, editMode b
 		htmlBuilder.WriteString("<fm>路径不存在: " + err.Error() + "</fm>")
 		htmlBuilder.WriteString("<fm><a href=\"/file?path=\">返回根目录</a></fm>")
 		if user.Username != fm.guestUser.Username {
-			htmlBuilder.WriteString("<fm><a href=\"/logout\">退出登录</a></fm>")
+			htmlBuilder.WriteString("<fm><a href=\"/file/logout\">退出登录</a></fm>")
 		} else {
-			htmlBuilder.WriteString("<fm><a href=\"/login\">登录获取更高权限</a></fm>")
+			htmlBuilder.WriteString("<fm><a href=\"/file/login\">登录获取更高权限</a></fm>")
 		}
 		htmlBuilder.WriteString("</body></html>")
 		return htmlBuilder.String()
@@ -144,10 +144,10 @@ func (fm *FileManager) generateFileManagerHTML(fullPath, path string, editMode b
 	htmlBuilder.WriteString("<div class='user-info'>")
 	if user.Username == fm.guestUser.Username {
 		htmlBuilder.WriteString("当前用户: 游客 | ")
-		htmlBuilder.WriteString("<a href='/login' class='login-btn'>登录获取更高权限</a>")
+		htmlBuilder.WriteString("<a href='/file/login' class='login-btn'>登录获取更高权限</a>")
 	} else {
 		htmlBuilder.WriteString("当前用户: " + user.Username + " | ")
-		htmlBuilder.WriteString("<a href='/logout' class='logout-btn'>退出登录</a>")
+		htmlBuilder.WriteString("<a href='/file/logout' class='logout-btn'>退出登录</a>")
 	}
 	htmlBuilder.WriteString("</div>")
 

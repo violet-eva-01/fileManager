@@ -43,7 +43,7 @@ func (fm *FileManager) showLoginForm(c *gin.Context) {
 			<h2>文件管理器登录</h2>
 			<p>登录以获取更高权限，或直接访问以游客角色浏览</p>
 			` + c.Query("error") + `
-			<form method="post" action="/login">
+			<form method="post" action="/file/login">
 				<div class="form-group">
 					<label for="username">用户名:</label>
 					<input type="text" id="username" name="username" required>
@@ -157,17 +157,17 @@ func (fm *FileManager) handleLogin(c *gin.Context) {
 
 	user, exists := fm.users[username]
 	if !exists {
-		c.Redirect(http.StatusSeeOther, "/login?error=<p class='error'>账户不存在或账户名输入错误</p>")
+		c.Redirect(http.StatusSeeOther, "/file/login?error=<p class='error'>账户不存在或账户名输入错误</p>")
 		return
 	} else if user.EncryptPassword != fm.hashPassword(password) {
-		c.Redirect(http.StatusSeeOther, "/login?error=<p class='error'>密码输入错误</p>")
+		c.Redirect(http.StatusSeeOther, "/file/login?error=<p class='error'>密码输入错误</p>")
 		return
 	}
 
 	token, err := fm.generateJWTToken(username)
 	if err != nil {
 		fm.log.Warn("生成JWT token失败,报错: ", err)
-		c.Redirect(http.StatusSeeOther, "/login?error=<p class='error'>登录失败，请重试</p>")
+		c.Redirect(http.StatusSeeOther, "/file/login?error=<p class='error'>登录失败，请重试</p>")
 		return
 	}
 

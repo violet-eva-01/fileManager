@@ -86,10 +86,10 @@ func (fm *FileManager)generateFileViewerHTML(fullPath, path string, user User) s
 	htmlBuilder.WriteString("<div class='user-info'>")
 	if user.Username == fm.guestUser.Username {
 		htmlBuilder.WriteString("当前用户: 游客 | ")
-		htmlBuilder.WriteString("<a href='/login' class='login-btn'>登录获取更高权限</a>")
+		htmlBuilder.WriteString("<a href='/file/login' class='login-btn'>登录获取更高权限</a>")
 	} else {
 		htmlBuilder.WriteString("当前用户: " + user.Username + " | ")
-		htmlBuilder.WriteString("<a href='/logout' class='logout-btn'>退出登录</a>")
+		htmlBuilder.WriteString("<a href='/file/logout' class='logout-btn'>退出登录</a>")
 	}
 	htmlBuilder.WriteString("</div>")
 
