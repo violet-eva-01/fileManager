@@ -141,7 +141,7 @@ func (fm *FileManager) jwtAuthMiddleware() gin.HandlerFunc {
 		if tokenString != "" {
 			claims, err := fm.validateJWTToken(tokenString)
 			if err != nil {
-				c.Set("user", guestUser)
+				c.Set("user", fm.guestUser)
 			} else {
 				c.Set("user", fm.users[claims.Username])
 			}
@@ -224,6 +224,6 @@ func (fm *FileManager) handleLogout(c *gin.Context) {
 		return
 	}
 
-	c.Set("user", guestUser)
+	c.Set("user", fm.guestUser)
 	c.Redirect(http.StatusSeeOther, "/file")
 }

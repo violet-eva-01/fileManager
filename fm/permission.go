@@ -58,14 +58,30 @@ func (u *User) isPathBlocked(path string) bool {
 	if u.IsAdmin() || len(u.BaseRolePathBlocking) == 0 {
 		return false
 	}
-
 	for _, pattern := range u.BaseRolePathBlocking {
-		if matchPathPattern(pattern, path) {
+		if matchPathBlockPattern(pattern, path) {
 			return true
 		}
 	}
 
 	return false
+}
+
+// 检查路径是否匹配
+func matchPathBlockPattern(pattern, path string) bool {
+	if pattern == "/" && path == "/" {
+		return true
+	}
+
+	normalizedPattern := "/" + strings.Trim(pattern, "/")
+	normalizedPath := "/" + strings.Trim(path, "/")
+	if normalizedPattern == normalizedPath {
+		return true
+	}
+
+	regexpStr := fmt.Sprintf("^%s", normalizedPattern)
+	compile := regexp.MustCompile(regexpStr)
+	return compile.MatchString(normalizedPath)
 }
 
 // IsPathAllowed 检查路径是否可以访问
@@ -109,12 +125,12 @@ func (fm *FileManager) requirePermission(requiredPermission string) gin.HandlerF
 		tmpUser, isExist := c.Get("user")
 		var user User
 		if !isExist {
-			user = guestUser
+			user = fm.guestUser
 		} else {
 			var exists bool
 			user, exists = tmpUser.(User)
 			if !exists {
-				user = guestUser
+				user = fm.guestUser
 			}
 		}
 		c.Set("user", user)
@@ -135,12 +151,12 @@ func (fm *FileManager) requirePermission(requiredPermission string) gin.HandlerF
 }
 
 // 路径检查中间件
-func checkPathPermission() gin.HandlerFunc {
+func (fm *FileManager) checkPathPermission() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, exists := c.Get("user")
 		if !exists {
 			// 如果没有用户信息，赋予user角色
-			user = guestUser
+			user = fm.guestUser
 			c.Set("user", user)
 		}
 		currentUser := user.(User)

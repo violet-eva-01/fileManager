@@ -10,7 +10,7 @@ import (
 )
 
 // 文件只读查看页面
-func generateFileViewerHTML(fullPath, path string, user User) string {
+func (fm *FileManager)generateFileViewerHTML(fullPath, path string, user User) string {
 	var htmlBuilder strings.Builder
 
 	// 读取文件内容
@@ -84,7 +84,7 @@ func generateFileViewerHTML(fullPath, path string, user User) string {
 
 	// 用户信息和登录/登出按钮
 	htmlBuilder.WriteString("<div class='user-info'>")
-	if user.Username == guestUser.Username {
+	if user.Username == fm.guestUser.Username {
 		htmlBuilder.WriteString("当前用户: 游客 | ")
 		htmlBuilder.WriteString("<a href='/login' class='login-btn'>登录获取更高权限</a>")
 	} else {

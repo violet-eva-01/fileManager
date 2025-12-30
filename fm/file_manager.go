@@ -44,16 +44,6 @@ func DefaultHashPassword(password string) string {
 	return hex.EncodeToString(hash[:])
 }
 
-// 默认游客账户
-var guestUser = User{
-	Username: "guest",
-	Permissions: map[string]bool{
-		PermissionFileView: true,
-		PermissionDirView:  true,
-	},
-	BaseRolePathRestrictions: []string{"/"},
-}
-
 func NewFileManager(dir string, logger *zap.Logger) *FileManager {
 	privateKey, publicKey, err := generateRSAKeyPair()
 	if err != nil {
@@ -70,7 +60,14 @@ func NewFileManager(dir string, logger *zap.Logger) *FileManager {
 		port:          "8080",
 		hashPassword:  DefaultHashPassword,
 		log:           logger.Sugar(),
-		guestUser:     guestUser,
+		guestUser: User{
+			Username: "guest",
+			Permissions: map[string]bool{
+				PermissionFileView: true,
+				PermissionDirView:  true,
+			},
+			BaseRolePathRestrictions: []string{"/"},
+		},
 	}
 }
 
@@ -266,10 +263,10 @@ func (fm *FileManager) Run() {
 	authorized := engine.Group("/", fm.jwtAuthMiddleware())
 	{
 		authorized.GET("/file", fm.requirePermission(PermissionDirView), fm.handleFileManager)
-		authorized.GET("/file/download", fm.requirePermission(PermissionFileDownload), checkPathPermission(), fm.handleFileDownload)
-		authorized.POST("/file/upload", fm.requirePermission(PermissionDirUpload), checkPathPermission(), fm.handleFileUpload)
-		authorized.GET("/file/edit", fm.requirePermission(PermissionFileEdit), checkPathPermission(), fm.handleFileEditor)
-		authorized.POST("/file/action", fm.requirePermission(PermissionDirView), checkPathPermission(), fm.handleFileAction)
+		authorized.GET("/file/download", fm.requirePermission(PermissionFileDownload), fm.checkPathPermission(), fm.handleFileDownload)
+		authorized.POST("/file/upload", fm.requirePermission(PermissionDirUpload), fm.checkPathPermission(), fm.handleFileUpload)
+		authorized.GET("/file/edit", fm.requirePermission(PermissionFileEdit), fm.checkPathPermission(), fm.handleFileEditor)
+		authorized.POST("/file/action", fm.requirePermission(PermissionDirView), fm.checkPathPermission(), fm.handleFileAction)
 	}
 
 	err := engine.Run(":" + fm.port)
@@ -281,7 +278,7 @@ func (fm *FileManager) Run() {
 func (fm *FileManager) handleFileManager(c *gin.Context) {
 	user, exists := c.Get("user")
 	if !exists {
-		user = guestUser
+		user = fm.guestUser
 	}
 
 	path := c.Query("path")
@@ -390,7 +387,7 @@ func (fm *FileManager) handleFileAction(c *gin.Context) {
 
 	user, exists := c.Get("user")
 	if !exists {
-		user = guestUser
+		user = fm.guestUser
 	}
 	currentUser := user.(User)
 
